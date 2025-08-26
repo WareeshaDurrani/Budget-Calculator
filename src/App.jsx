@@ -72,10 +72,16 @@ export default function App() {
     setUser(budgetHolder);
   };
 
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return user ? (
-    <div>
+    <div style={{ textAlign: "center", marginTop: 50 }}>
       <h2>Welcome, {user}!</h2>
-      { }
+      <button onClick={handleLogout} className="logout-btn" title="Logout">
+        Logout
+      </button>
     </div>
   ) : (
     <Login onLogin={handleLogin} />
