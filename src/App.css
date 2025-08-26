@@ -98,7 +98,6 @@ h2{
   background-color: #c1d4d7;
 }
 
-
 .logout-btn {
   background-color: #e53935;
   color: white;
@@ -106,7 +105,7 @@ h2{
   height: 40px;
   border-radius: 6px;
   padding: 6px 16px;
-  font-size: 18px;
+  font-size: 19px;
   cursor: pointer;
   margin-left: 15px;
 }
