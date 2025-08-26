@@ -98,6 +98,42 @@ h2{
   background-color: #c1d4d7;
 }
 
+.bar-chart-container {
+  margin-top: 20px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bar-label {
+  width: 120px;
+  font-weight: 600;
+  color: #40476d;
+}
+
+.bar-outer {
+  background-color: #ddd;
+  border-radius: 6px;
+  height: 24px;
+  flex-grow: 1;
+  margin-left: 15px;
+  overflow: hidden;
+}
+
+.bar-inner {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.total-bar-label {
+  font-weight: 700;
+  margin-top: 15px;
+}
+
 .logout-btn {
   background-color: #e53935;
   color: white;

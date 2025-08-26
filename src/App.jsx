@@ -19,14 +19,17 @@ const colors = {
 };
 
 function Login({ onLogin }) {
-  const [budgetHolder, setBudgetHolder] = useState("");
+  const [budgetHolder, setBudgetHolder] =
+    useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!budgetHolder.trim()) {
-      setError("Please enter the budget holder's name");
+      setError(
+        "Please enter the budget holder's name"
+      );
       return;
     }
     if (password !== "123") {
@@ -42,23 +45,31 @@ function Login({ onLogin }) {
       <h2>Bircube Budget Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
-          <label className="label">Budget Holder</label>
+          <label className="label">
+            Budget Holder
+          </label>
           <input
             className="input"
             type="text"
             value={budgetHolder}
-            onChange={(e) => setBudgetHolder(e.target.value)}
+            onChange={(e) =>
+              setBudgetHolder(e.target.value)
+            }
             placeholder="Name"
             required
           />
         </div>
         <div className="input-group">
-          <label className="label">Password</label>
+          <label className="label">
+            Password
+          </label>
           <input
             className="input"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
             placeholder="Password"
             required
           />
@@ -83,13 +94,21 @@ function Login({ onLogin }) {
 }
 
 function BudgetCalculator({ user, onLogout }) {
-  const [dateMonth, setDateMonth] = useState(new Date().toISOString().slice(0, 7));
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [dateMonth, setDateMonth] =
+    useState(
+      new Date().toISOString().slice(0, 7)
+    );
+  const [expenses, setExpenses] = useState(
+    initialExpenses
+  );
   const [total, setTotal] = useState(0);
-  const [exceedLimit, setExceedLimit] = useState(false);
+  const [exceedLimit, setExceedLimit] =
+    useState(false);
 
   useEffect(() => {
-    const savedDataStr = localStorage.getItem(STORAGE_KEY);
+    const savedDataStr = localStorage.getItem(
+      STORAGE_KEY
+    );
     if (savedDataStr) {
       const savedData = JSON.parse(savedDataStr);
       const key = `${user}-${dateMonth}`;
@@ -102,24 +121,42 @@ function BudgetCalculator({ user, onLogout }) {
   }, [user, dateMonth]);
 
   useEffect(() => {
-    const vals = Object.values(expenses).map((v) => parseFloat(v) || 0);
-    const sum = vals.reduce((acc, cur) => acc + cur, 0);
+    const vals = Object.values(expenses).map(
+      (v) => parseFloat(v) || 0
+    );
+    const sum = vals.reduce(
+      (acc, cur) => acc + cur,
+      0
+    );
     setTotal(sum);
     setExceedLimit(sum > BUDGET_LIMIT);
 
-    const savedDataStr = localStorage.getItem(STORAGE_KEY);
+    const savedDataStr = localStorage.getItem(
+      STORAGE_KEY
+    );
     let savedData = {};
     if (savedDataStr) {
       savedData = JSON.parse(savedDataStr);
     }
     const key = `${user}-${dateMonth}`;
-    savedData[key] = { expenses };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
+    savedData[key] = {
+      expenses,
+    };
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(savedData)
+    );
   }, [expenses, user, dateMonth]);
 
-  const handleExpenseChange = (e, field) => {
+  const handleExpenseChange = (
+    e,
+    field
+  ) => {
     let val = e.target.value;
-    if (val === "" || /^[0-9]*\.?[0-9]*$/.test(val)) {
+    if (
+      val === "" ||
+      /^[0-9]*\.?[0-9]*$/.test(val)
+    ) {
       setExpenses({
         ...expenses,
         [field]: val,
@@ -127,14 +164,28 @@ function BudgetCalculator({ user, onLogout }) {
     }
   };
 
+  const getBarWidth = (amount) => {
+    if (total === 0) return 0;
+    return Math.min((amount / total) * 100, 100);
+  };
+
   return (
     <div className="container">
-      <h1 className="header">Bircube Monthly Budget Calculator</h1>
+      <h1 className="header">
+        Bircube Monthly Budget Calculator
+      </h1>
 
-      <div className="card" style={{ marginBottom: 10, textAlign: "right" }}>
+      <div
+        className="card"
+        style={{ marginBottom: 10, textAlign: "right" }}
+      >
         <div>
           Hello, <strong>{user}</strong>{" "}
-          <button onClick={onLogout} className="logout-btn" title="Logout">
+          <button
+            onClick={onLogout}
+            className="logout-btn"
+            title="Logout"
+          >
             Logout
           </button>
         </div>
@@ -142,44 +193,112 @@ function BudgetCalculator({ user, onLogout }) {
 
       <div className="card" style={{ marginBottom: 25 }}>
         <div className="input-group">
-          <label className="label">Select Month and Year</label>
+          <label className="label">
+            Select Month and Year
+          </label>
           <input
             className="input"
             type="month"
             value={dateMonth}
-            onChange={(e) => setDateMonth(e.target.value)}
+            onChange={(e) =>
+              setDateMonth(e.target.value)
+            }
           />
         </div>
 
         <div className="flex-row">
-          {Object.keys(expenses).map((key) => (
-            <div className="flex-col" key={key}>
-              <label className="label">
-                {key
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase())}
-              </label>
-              <input
-                className="input"
-                type="text"
-                inputMode="decimal"
-                value={expenses[key]}
-                onChange={(e) => handleExpenseChange(e, key)}
-                placeholder="Amount in PKR"
-              />
-            </div>
-          ))}
+          {Object.keys(expenses).map(
+            (key) => (
+              <div
+                className="flex-col"
+                key={key}
+              >
+                <label className="label">
+                  {key
+                    .replace(
+                      /([A-Z])/g,
+                      " $1"
+                    )
+                    .replace(
+                      /^./,
+                      (str) =>
+                        str.toUpperCase()
+                    )}
+                </label>
+                <input
+                  className="input"
+                  type="text"
+                  inputMode="decimal"
+                  value={expenses[key]}
+                  onChange={(e) =>
+                    handleExpenseChange(e, key)
+                  }
+                  placeholder="Amount in PKR"
+                />
+              </div>
+            )
+          )}
         </div>
       </div>
 
       {exceedLimit && (
         <div className="notification">
-          Alert: Budget limit of Rs 50,000 has been exceeded!
+          Alert: Budget limit of Rs 50,000 has been
+          exceeded!
         </div>
       )}
 
       <div className="card">
-        <h3>Total Expenses: Rs {total.toFixed(2)}</h3>
+        <h3>
+          Total Expenses: Rs {total.toFixed(2)}
+        </h3>
+
+        <div className="bar-chart-container">
+          {Object.entries(expenses).map(
+            ([key, val]) => {
+              const amount =
+                parseFloat(val) || 0;
+              const widthPercent =
+                getBarWidth(amount);
+              return (
+                <div
+                  key={key}
+                  className="bar-row"
+                >
+                  <div className="bar-label">
+                    {key
+                      .replace(
+                        /([A-Z])/g,
+                        " $1"
+                      )
+                      .replace(
+                        /^./,
+                        (str) =>
+                          str.toUpperCase()
+                      )}
+                    : Rs {amount.toFixed(2)}
+                  </div>
+                  <div
+                    className="bar-outer"
+                    aria-label={`${key} expense bar`}
+                  >
+                    <div
+                      className="bar-inner"
+                      style={{
+                        width: `${widthPercent}%`,
+                        backgroundColor:
+                          colors[key],
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            }
+          )}
+          <div className="total-bar-label">
+            Monthly budget limit: Rs 50,000
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -196,5 +315,12 @@ export default function App() {
     setUser(null);
   };
 
-  return user ? <BudgetCalculator user={user} onLogout={handleLogout} /> : <Login onLogin={handleLogin} />;
+  return user ? (
+    <BudgetCalculator
+      user={user}
+      onLogout={handleLogout}
+    />
+  ) : (
+    <Login onLogin={handleLogin} />
+  );
 }
