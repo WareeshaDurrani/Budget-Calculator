@@ -97,7 +97,7 @@ function Login({ onLogin }) {
   );
 }
 
-/*function ExpensesPage({ user, onLogout }) {
+function ExpensesPage({ user, onLogout }) {
   const [dateMonth, setDateMonth] = useState(new Date().toISOString().slice(0, 7));
   const [expenses, setExpenses] = useState(initialExpenses);
   const [total, setTotal] = useState(0);
@@ -267,7 +267,7 @@ function LogoutPage({ onLogout }) {
       </Button>
     </Box>
   );
-}*/
+}
 
 export default function App() {
   const [user, setUser] = useState(null);
