@@ -35,7 +35,7 @@ function Login({ onLogin }) {
       setError("Please enter the budget holder's name");
       return;
     }
-    if (password !== "123") {
+    if (password !== "Bircube123") {
       setError("Password is incorrect");
       return;
     }
@@ -45,50 +45,48 @@ function Login({ onLogin }) {
 
   return (
     <Box sx={{ maxWidth: 400, margin: "auto", mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Bircube Budget Login
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label className="label">Budget Holder</label>
-          <input
-            className="input"
-            type="text"
-            value={budgetHolder}
-            onChange={(e) => setBudgetHolder(e.target.value)}
-            placeholder="Name"
-            required
-          />
-        </div>
-        <div className="input-group">
-          <label className="label">Password</label>
-          <input
-            className="input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-          />
-        </div>
-        {error && (
-          <div
-            style={{
-              color: "#ff1744",
-              marginBottom: 10,
-              fontWeight: "600",
-            }}
-          >
-            {error}
+      {/* Outer container div outside login items */}
+      <div className="login-container">
+        <Typography variant="h5" gutterBottom>
+          Bircube Budget Login
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label className="label">Budget Holder</label>
+            <input
+              className="input"
+              type="text"
+              value={budgetHolder}
+              onChange={(e) => setBudgetHolder(e.target.value)}
+              placeholder="Name"
+              required
+            />
           </div>
-        )}
-        <button className="button" type="submit">
-          Login
-        </button>
-      </form>
+          <div className="input-group">
+            <label className="label">Password</label>
+            <input
+              className="input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+            />
+          </div>
+          {error && (
+            <div style={{ color: "#ff1744", marginBottom: 10, fontWeight: "600" }}>
+              {error}
+            </div>
+          )}
+          <button className="button" type="submit">
+            Login
+          </button>
+        </form>
+      </div>
     </Box>
   );
 }
+
 
 function ExpensesPage({ user }) {
   const [dateMonth, setDateMonth] = useState(new Date().toISOString().slice(0, 7));
@@ -288,12 +286,14 @@ function ChartPage({ user }) {
 function LogoutPage({ onLogout }) {
   return (
     <Box sx={{ mt: 8, textAlign: "center" }}>
+      <div className="logout">
       <Typography variant="h5" gutterBottom>
         Are you sure you want to logout?
       </Typography>
       <Button variant="contained" color="primary" onClick={onLogout}>
         Confirm Logout
       </Button>
+      </div>
     </Box>
   );
 }
