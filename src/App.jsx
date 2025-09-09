@@ -14,21 +14,14 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import "./App.css";
 
-const BUDGET_LIMIT = 50000;
 const STORAGE_KEY = "Bircube's Budget Calculator";
+const BUDGET_LIMIT = 50000;
 
 const initialExpenses = {
   officeSupplies: "",
-  Bills: "",
+  bills: "",
   travel: "",
   food: "",
-};
-
-const colors = {
-  officeSupplies: "#3f51b5",
-  salaries: "#ff9800",
-  travel: "#4caf50",
-  food: "#e91e63",
 };
 
 function Login({ onLogin }) {
@@ -97,7 +90,7 @@ function Login({ onLogin }) {
   );
 }
 
-function ExpensesPage({ user, onLogout }) {
+function ExpensesPage({ user }) {
   const [dateMonth, setDateMonth] = useState(new Date().toISOString().slice(0, 7));
   const [expenses, setExpenses] = useState(initialExpenses);
   const [total, setTotal] = useState(0);
@@ -128,9 +121,7 @@ function ExpensesPage({ user, onLogout }) {
       savedData = JSON.parse(savedDataStr);
     }
     const key = `${user}-${dateMonth}`;
-    savedData[key] = {
-      expenses,
-    };
+    savedData[key] = { expenses };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
   }, [expenses, user, dateMonth]);
 
@@ -144,20 +135,12 @@ function ExpensesPage({ user, onLogout }) {
     }
   };
 
-  const getBarWidth = (amount) => {
-    if (total === 0) return 0;
-    return Math.min((amount / total) * 100, 100);
-  };
-
   return (
     <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
         <Typography variant="h6">
           Hello, <strong>{user}</strong>
         </Typography>
-        <Button variant="outlined" onClick={onLogout}>
-          Logout
-        </Button>
       </Box>
 
       <Box sx={{ mb: 3 }}>
@@ -171,7 +154,7 @@ function ExpensesPage({ user, onLogout }) {
         />
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+      <Box sx={{ display: "flex", gap: 2, flexWrap: "nowrap" }}>
         {Object.keys(expenses).map((key) => (
           <Box key={key} sx={{ flex: "1 1 150px" }}>
             <label>
@@ -196,61 +179,107 @@ function ExpensesPage({ user, onLogout }) {
           Alert: Budget limit of Rs 50,000 has been exceeded!
         </Box>
       )}
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h6">Total Expenses: Rs {total.toFixed(2)}</Typography>
-        <Box sx={{ mt: 2 }}>
-          {Object.entries(expenses).map(([key, val]) => {
-            const amount = parseFloat(val) || 0;
-            const widthPercent = getBarWidth(amount);
-            return (
-              <Box key={key} sx={{ mb: 1 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography variant="body2">
-                    {key
-                      .replace(/([A-Z])/g, " $1")
-                      .replace(/^./, (str) => str.toUpperCase())}{" "}
-                    : Rs {amount.toFixed(2)}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    backgroundColor: "#eee",
-                    height: 20,
-                    borderRadius: 1,
-                    overflow: "hidden",
-                  }}
-                  aria-label={`${key} expense bar`}
-                >
-                  <Box
-                    sx={{
-                      width: `${widthPercent}%`,
-                      backgroundColor: colors[key],
-                      height: "100%",
-                    }}
-                  />
-                </Box>
-              </Box>
-            );
-          })}
-          <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
-            Monthly budget limit: Rs 50,000
-          </Typography>
-        </Box>
-      </Box>
     </Box>
   );
 }
 
-function ChartPage() {
+function ChartPage({ user }) {
+  const [dateMonth, setDateMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [expenses, setExpenses] = useState(initialExpenses);
+  const [total, setTotal] = useState(0);
+  const [exceedLimit, setExceedLimit] = useState(false);
+
+  useEffect(() => {
+    const savedDataStr = localStorage.getItem(STORAGE_KEY);
+    if (savedDataStr) {
+      const savedData = JSON.parse(savedDataStr);
+      const key = `${user}-${dateMonth}`;
+      if (savedData[key]) {
+        setExpenses(savedData[key].expenses);
+      } else {
+        setExpenses(initialExpenses);
+      }
+    }
+  }, [user, dateMonth]);
+
+  useEffect(() => {
+    const vals = Object.values(expenses).map((v) => parseFloat(v) || 0);
+    const sum = vals.reduce((acc, cur) => acc + cur, 0);
+    setTotal(sum);
+    setExceedLimit(sum > BUDGET_LIMIT);
+  }, [expenses]);
+
+  const getBarWidth = (amount) => {
+    if (total === 0) return 0;
+    return Math.min((amount / total) * 100, 100);
+  };
+
+  const colors = {
+    officeSupplies: "#3f51b5",
+    bills: "#ff9800",
+    travel: "#4caf50",
+    food: "#e91e63",
+  };
+
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 600 }}>
-      <Typography variant="h5" gutterBottom>
-        Chart View (Placeholder)
+    <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
+      <Box sx={{ mb: 3 }}>
+        <label htmlFor="monthSelect">Select Month and Year</label>
+        <input
+          id="monthSelect"
+          type="month"
+          value={dateMonth}
+          onChange={(e) => setDateMonth(e.target.value)}
+          style={{ marginLeft: 10 }}
+        />
+      </Box>
+
+      <Typography variant="h6" gutterBottom>
+        Total Expenses: Rs {total.toFixed(2)}
       </Typography>
-      <Typography>
-        This is a placeholder for the chart component, which can be implemented
-        with chart library like Chart.js or Recharts.
+
+      {exceedLimit && (
+        <Box sx={{ color: "#d32f2f", fontWeight: "600", mb: 2 }}>
+          Alert: Budget limit of Rs 50,000 has been exceeded!
+        </Box>
+      )}
+
+      <Box>
+        {Object.entries(expenses).map(([key, val]) => {
+          const amount = parseFloat(val) || 0;
+          const widthPercent = getBarWidth(amount);
+          return (
+            <Box key={key} sx={{ mb: 2 }}>
+              <Typography variant="body1" gutterBottom>
+                {key
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^./, (str) => str.toUpperCase())}{" "}
+                : Rs {amount.toFixed(2)}
+              </Typography>
+              <Box
+                sx={{
+                  backgroundColor: "#e0e0e0",
+                  height: 20,
+                  borderRadius: 1,
+                  overflow: "hidden",
+                }}
+                aria-label={`${key} expense bar`}
+              >
+                <Box
+                  sx={{
+                    width: `${widthPercent}%`,
+                    backgroundColor: colors[key],
+                    height: "100%",
+                  }}
+                />
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
+
+      <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
+        Monthly budget limit: Rs 50,000
       </Typography>
     </Box>
   );
@@ -354,10 +383,8 @@ export default function App() {
 
       <Box sx={{ p: 2 }}>
         {selectedMenu === "Login" && <Login onLogin={handleLogin} />}
-        {selectedMenu === "Expenses" && user && (
-          <ExpensesPage user={user} onLogout={handleLogout} />
-        )}
-        {selectedMenu === "Chart" && user && <ChartPage />}
+        {selectedMenu === "Expenses" && user && <ExpensesPage user={user} />}
+        {selectedMenu === "Chart" && user && <ChartPage user={user} />}
         {selectedMenu === "Logout" && <LogoutPage onLogout={handleLogout} />}
       </Box>
     </>
